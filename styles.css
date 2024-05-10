@@ -1,0 +1,106 @@
+/*
+  Name:    Heidi Wang
+  Date:    2024 04 16
+  Section: CSE 154 AG
+
+  This is the styles.css file for a personal website.
+  It sets a clean off-white style with a warm tone for all the sites.
+*/
+
+/* sections */
+
+body {
+  background-color: hsl(39, 94%, 87%);
+  color: hsl(343, 70%, 21%);
+  font-family: "PT Serif", serif;
+  margin-left: 14%;
+  margin-right: 14%;
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  width: 72%;
+}
+
+section {
+  background-color: hsl(39, 94%, 83%);
+  padding: 1% 2%;
+  margin: 2% 0%;
+}
+
+article {
+  width: 40%;
+  display: inline-block;
+  background-color: hsl(39, 94%, 87%);
+  padding: 2%;
+  margin: 2%;
+}
+
+blockquote {
+  margin: 0%;
+}
+
+/* content */
+
+h1 {
+  text-align: center;
+  font-size: 40px;
+}
+
+h1, h2 {
+  font-family: "Lato", sans-serif;
+}
+
+ol, ul {
+  line-height: 160%;
+}
+
+blockquote > p, ol strong {
+  color: hsl(11, 94%, 35%);
+}
+
+a:link {
+  color: hsl(172, 100%, 28%);
+}
+
+::selection {
+  background-color: hsl(37, 74%, 50%);
+}
+
+img {
+  width: 40%;
+}
+
+/* buttons */
+
+div#img-toggle { /* div.button:has(button#img-toggle) */
+  text-align: center;
+}
+
+button {
+  background-color: hsl(39, 94%, 92%);
+  color: hsl(343, 70%, 21%);
+  font-family: "PT Serif", serif;
+}
+
+button:hover {
+  background-color: hsl(39, 94%, 88%);
+}
+
+button:active {
+  background-color: hsl(39, 94%, 84%);
+}
+
+button:disabled:hover, button:disabled:active {
+  background-color: hsl(39, 94%, 92%);
+}
+
+button.clicked {
+  background-color: hsl(11, 94%, 92%);
+}
+
+button.clicked:hover {
+  background-color: hsl(11, 94%, 88%);
+}
+
+button.clicked:active {
+  background-color: hsl(11, 94%, 84%);
+}

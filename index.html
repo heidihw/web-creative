@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--
+  Name:    Heidi Wang
+  Date:    2024 05 02
+  Section: CSE 154 AG
+
+  This is the index.html file for a personal website.
+  It shows some fun facts about myself and links to a subpage about wushu.
+-->
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <script src="index.js"></script>
+    <title>CP3 | Heidi Wang</title>
+  </head>
+  <body>
+    <section>
+      <h1>I'm Heidi.</h1>
+      <h2>This is my website!</h2>
+      <p>
+        I am an out of state second year student in HCDE Data Science.
+        I've taken CSE 373, 416, 374, 414, and 413 so far
+        among the upper division non-major CSE courses.
+      </p>
+    </section>
+
+    <section>
+      <h2>Classes I'm currently taking</h2>
+      <ul>
+        <li>CSE 154</li>
+        <li>HCDE 300</li>
+        <li>HCDE 308</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Favorites</h2>
+      <h3>Five of My Favorite Things</h3>
+      <ol>
+        <li><strong>Favorite sport:</strong>
+          wushu!!! (Chinese martial arts, kung fu)
+          <ul>
+            <li>
+              The <a href="https://en.wikipedia.org/wiki/Wushu_(sport)">wikipedia</a>
+              page for the sport
+            </li>
+            <li>Our club instagram @<a href="https://www.instagram.com/uwwushu/">uwwushu</a></li>
+            <li>Check out <a href="wushu.html">more</a> about wushu and our club!</li>
+          </ul>
+        </li>
+        <li><strong>Favorite music albums:</strong>
+          as of 2024/03/27
+          <ul>
+            <li>Vancouver Sleep Clinic - Revival</li>
+            <li>Kasbo - The Making of a Paracosm</li>
+            <li>Jaron - it's hard to see color [When You're So Impossibly Far Away*]</li>
+            <li>D.O. - Expectation</li>
+          </ul>
+        </li>
+        <li><strong>Favorite music genre:</strong> kpop</li>
+        <li><strong>Favorite music artist:</strong> NCT Dream</li>
+        <li><strong>Favorite food:</strong> chive dumplings</li>
+      </ol>
+
+      <div class="button" id="img-toggle">
+        <button>Click to hide the images below</button>
+      </div>
+
+      <article id="img1">
+        <h3>A picture that represents when I'm happy</h3>
+        <img src="pxl_20230306_220336500.jpg"
+          alt="image of wushu straightsword showing hilt and blade, partly sheathed">
+        <!-- <p>img src: taken by me</p> -->
+      </article>
+
+      <article id="img2">
+        <h3>A picture that represents when I'm sad</h3>
+        <img src="pxl_20230424_202354137.jpg"
+          alt="image of door exiting Suzzallo and Allen Libraries to the breezeway,
+          emphasizing the handle signifying a pull interaction but requiring a push">
+        <!-- <p>img src: also taken by me</p> -->
+      </article>
+
+      <h3>Some of my favorite quotes</h3>
+      <article>
+        <blockquote>
+          <p>
+            listen to your teachers<br>
+            listen to your parents<br>
+            always do your best<br>
+            never say can't<br>
+            use kungfu only for good
+          </p>
+          <footer>— O-Mei Kung Fu Academy</footer>
+        </blockquote>
+      </article>
+
+      <article>
+        <blockquote>
+          <p>
+            <!-- <br><br><br><br> -->
+            "don't be intimidated, and don't be a stranger"
+          </p>
+          <footer>— Edward Njoo, 2020/06/18</footer>
+        </blockquote>
+      </article>
+    </section>
+
+    <section>
+      <h2>The US in World Money</h2>
+      <article>
+      <h3>From the World Bank:</h3>
+        <div class="button" id="world-banks">
+          <button>Get World Banks data</button>
+        </div>
+      </article>
+      <article>
+      <h3>From the US Treasury:</h3>
+        <div class="button" id="us-treasury">
+          <button>Get Treasury data</button>
+        </div>
+      </article>
+    </section>
+  </body>
+</html>
