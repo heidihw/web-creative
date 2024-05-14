@@ -38,6 +38,23 @@
 
     document.querySelector('div#world-banks button').addEventListener('click', callWb);
     document.querySelector('div#us-treasury button').addEventListener('click', callUst);
+
+    document.querySelector('div#music button').addEventListener('click', getMusic);
+  }
+
+  async function getMusic() {
+    let article = this.parentElement.parentElement;
+    try {
+      let res = await fetch('/music');
+      console.log(res);
+    } catch (err) {
+      if (err.state === 500) {
+        console.log('The server encountered an error')
+      } else {
+        console.log(err);
+        handleError(article);
+      }
+    }
   }
 
   /**
@@ -68,7 +85,7 @@
       incomeSource.href = 'https://en.wikipedia.org/wiki/World_Bank_high-income_economy';
       article.appendChild(incomeSource);
     } catch (err) {
-      handleMoneyError(article);
+      handleError(article);
     }
   }
 
@@ -100,7 +117,7 @@
         data['data'][0]['tot_pub_debt_out_amt'] + '$';
       article.appendChild(pubOut);
     } catch (err) {
-      handleMoneyError(article);
+      handleError(article);
     }
   }
 
@@ -138,9 +155,9 @@
    * @param {exception} err - the contents of the error.
    * @param {article} article - the DOM element within which to display the error message.
    */
-  function handleMoneyError(article) {
+  function handleError(article) {
     let errMsg = document.createElement('p');
-    errMsg.textContent = 'There was an error retrieving the requested fiscal data.';
+    errMsg.textContent = 'There was an error retrieving the requested data.';
     article.appendChild(errMsg);
   }
 

@@ -12,14 +12,24 @@
 const express = require('express');
 const app = express();
 const multer = require('multer');
+const fs = require('fs').promises;
 
 app.use(multer().none());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// app.get('/hello', (req, res) => {
-//   res.type('text').send('welcome to my first endpoint!!!!!!');
-// });
+app.get('/music', async (req, res) => {
+  try {
+    res.type('json').send(JSON.parse(await fs.readFile('data/music.json', 'utf8')));
+  } catch (err) {
+    res.type('text').status(500).send('Failed to get music data.');
+  }
+});
+
+app.get('/music/rand', (req, res) => {
+
+  res.type('text').send('welcome to my first endpoint!!!!!!');
+});
 
 
 // app.post('/update/otter', (req, res) => {
