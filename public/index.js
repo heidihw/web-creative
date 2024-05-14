@@ -64,11 +64,11 @@
         'with a gross national income per capita of US$13,845 or more in 2022.';
       article.appendChild(incomeDesc);
       let incomeSource = document.createElement('a');
-      incomeSource.textContent = 'Source: Wikipedia';
+      incomeSource.textContent = 'Definition of high-income economy from Wikipedia.';
       incomeSource.href = 'https://en.wikipedia.org/wiki/World_Bank_high-income_economy';
       article.appendChild(incomeSource);
     } catch (err) {
-      handleError(err, article);
+      handleMoneyError(article);
     }
   }
 
@@ -100,7 +100,7 @@
         data['data'][0]['tot_pub_debt_out_amt'] + '$';
       article.appendChild(pubOut);
     } catch (err) {
-      handleError(err, article);
+      handleMoneyError(article);
     }
   }
 
@@ -122,45 +122,6 @@
   }
 
   /**
-   * Contains the main functionality for the image button.
-   * Hides or shows the images in the list, depending on the current state
-   * as indicated by the button classes.
-   */
-  function toggleImgs() {
-    if (this.classList.contains('clicked')) {
-      showImgs(this);
-    } else {
-      hideImgs(this);
-    }
-  }
-
-  /**
-   * Hides the images in the list.
-   * @param {button} button - the button that was clicked to call this function.
-   */
-  function hideImgs(button) {
-    let toShow = 'Click to show the images below';
-    button.textContent = toShow;
-    button.classList.add('clicked');
-    for (let i = 0; i < images.length; i++) {
-      parents[i].removeChild(images[i]);
-    }
-  }
-
-  /**
-   * Shows the images in the list.
-   * @param {button} button - the button that was clicked to call this function.
-   */
-  function showImgs(button) {
-    let toHide = 'Click to hide the images below';
-    button.textContent = toHide;
-    button.classList.remove('clicked');
-    for (let i = 0; i < images.length; i++) {
-      parents[i].appendChild(images[i]);
-    }
-  }
-
-  /**
    * Checks the status of the given Response and throws an error if the status is not ok.
    * @param {Response} res - the given Response of which to check the status.
    * @returns {Response} given as the parameter.
@@ -177,10 +138,49 @@
    * @param {exception} err - the contents of the error.
    * @param {article} article - the DOM element within which to display the error message.
    */
-  function handleError(err, article) {
+  function handleMoneyError(article) {
     let errMsg = document.createElement('p');
-    errMsg.textContent = err;
+    errMsg.textContent = 'There was an error retrieving the requested fiscal data.';
     article.appendChild(errMsg);
+  }
+
+  /**
+   * Contains the main functionality for the image button.
+   * Hides or shows the images in the list, depending on the current state
+   * as indicated by the button classes.
+   */
+  function toggleImgs() {
+    if (!this.classList.contains('clicked')) {
+      showImgs(this);
+    } else {
+      hideImgs(this);
+    }
+  }
+
+  /**
+   * Hides the images in the list.
+   * @param {button} button - the button that was clicked to call this function.
+   */
+  function hideImgs(button) {
+    let toShow = 'Click to show the images below';
+    button.textContent = toShow;
+    button.classList.remove('clicked');
+    for (let i = 0; i < images.length; i++) {
+      parents[i].removeChild(images[i]);
+    }
+  }
+
+  /**
+   * Shows the images in the list.
+   * @param {button} button - the button that was clicked to call this function.
+   */
+  function showImgs(button) {
+    let toHide = 'Click to hide the images below';
+    button.textContent = toHide;
+    button.classList.add('clicked');
+    for (let i = 0; i < images.length; i++) {
+      parents[i].appendChild(images[i]);
+    }
   }
 
 })();
