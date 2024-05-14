@@ -14,12 +14,12 @@
   let images = [];
   let parents = [];
 
-  const MILLISECOND = 1000;
-  const SECOND = 60;
-  const MINUTE = SECOND * MILLISECOND;
-  const HOUR = 60;
-  const DAY = 24;
-  const YESTERDAY = DAY * HOUR * MINUTE;
+  const MILLISECONDS_PER_SECOND = 1000;
+  const SECONDS_PER_MINUTE = 60;
+  const MILLISECONDS_PER_MINUTE = SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
+  const MINUTES_PER_HOUR = 60;
+  const HOURS_PER_DAY = 24;
+  const MILLISECONDS_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR * MILLISECONDS_PER_MINUTE;
 
   /**
    * Sets up the lists for the image button to function, including lists of the images
@@ -81,7 +81,7 @@
     this.disabled = true;
     let article = this.parentElement.parentElement;
     try {
-      let res = await fetch(makeUstUrl);
+      let res = await fetch(makeUstUrl());
       statusCheck(res);
       let data = await res.json();
 
@@ -111,34 +111,18 @@
    */
   function makeUstUrl() {
     let ustUrl = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?filter=record_date:eq:';
-    let yourDate = new Date(Date.now() - YESTERDAY);
-    const offset = yourDate.getTimezoneOffset();
-    yourDate = new Date(yourDate.getTime() - (offset * MINUTE));
-    let today = yourDate.toISOString().split('T')[0];
-    return ustUrl + today;
-  }
-
-  /**
-   * Checks the status of the given Response and throws an error if the status is not ok.
-   * @param {Response} res - the given Response of which to check the status.
-   * @returns {Response} given as the parameter.
-   */
-  async function statusCheck(res) {
-    if (!res.ok) {
-      throw new Error(await res.text());
+    let currDateUTC = new Date(Date.now());
+    let currDateCurrTimezone = new Date(currDateUTC.getTime() - (currDateUTC.getTimezoneOffset() * MILLISECONDS_PER_MINUTE));
+    let lastWeekday = new Date(currDateCurrTimezone.getTime() - MILLISECONDS_PER_DAY);
+    while (lastWeekday.getDay() === 0 || lastWeekday.getDay() === 6) {
+      lastWeekday = new Date(lastWeekday.getTime() - MILLISECONDS_PER_DAY);
     }
-    return res;
-  }
-
-  /**
-   * Updates the DOM to display the message in the given error.
-   * @param {exception} err - the contents of the error.
-   * @param {article} article - the DOM element within which to display the error message.
-   */
-  function handleError(err, article) {
-    let errMsg = document.createElement('p');
-    errMsg.textContent = err;
-    article.appendChild(errMsg);
+    return ustUrl + lastWeekday.toISOString().split('T')[0];
+    // let yesterday = new Date(Date.now() - MILLISECONDS_PER_DAY);
+    // const timezoneOffsetMinutes = yesterday.getTimezoneOffset();
+    // yesterday = new Date(yesterday.getTime() - (timezoneOffsetMinutes * MILLISECONDS_PER_MINUTE));
+    // let today = yesterday.toISOString().split('T')[0];
+    // return ustUrl + today;
   }
 
   /**
@@ -178,6 +162,29 @@
     for (let i = 0; i < images.length; i++) {
       parents[i].appendChild(images[i]);
     }
+  }
+
+  /**
+   * Checks the status of the given Response and throws an error if the status is not ok.
+   * @param {Response} res - the given Response of which to check the status.
+   * @returns {Response} given as the parameter.
+   */
+  async function statusCheck(res) {
+    if (!res.ok) {
+      throw new Error(await res.text());
+    }
+    return res;
+  }
+
+  /**
+   * Updates the DOM to display the message in the given error.
+   * @param {exception} err - the contents of the error.
+   * @param {article} article - the DOM element within which to display the error message.
+   */
+  function handleError(err, article) {
+    let errMsg = document.createElement('p');
+    errMsg.textContent = err;
+    article.appendChild(errMsg);
   }
 
 })();
