@@ -112,17 +112,13 @@
   function makeUstUrl() {
     let ustUrl = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?filter=record_date:eq:';
     let currDateUTC = new Date(Date.now());
-    let currDateCurrTimezone = new Date(currDateUTC.getTime() - (currDateUTC.getTimezoneOffset() * MILLISECONDS_PER_MINUTE));
-    let lastWeekday = new Date(currDateCurrTimezone.getTime() - MILLISECONDS_PER_DAY);
-    while (lastWeekday.getDay() === 0 || lastWeekday.getDay() === 6) {
-      lastWeekday = new Date(lastWeekday.getTime() - MILLISECONDS_PER_DAY);
+    let currDateCurrTimezone =
+      new Date(currDateUTC.getTime() - (currDateUTC.getTimezoneOffset() * MILLISECONDS_PER_MINUTE));
+    let lastBusinessDay = new Date(currDateCurrTimezone.getTime() - MILLISECONDS_PER_DAY);
+    while (lastBusinessDay.getDay() === 0 || lastBusinessDay.getDay() === 6) {
+      lastBusinessDay = new Date(lastBusinessDay.getTime() - MILLISECONDS_PER_DAY);
     }
-    return ustUrl + lastWeekday.toISOString().split('T')[0];
-    // let yesterday = new Date(Date.now() - MILLISECONDS_PER_DAY);
-    // const timezoneOffsetMinutes = yesterday.getTimezoneOffset();
-    // yesterday = new Date(yesterday.getTime() - (timezoneOffsetMinutes * MILLISECONDS_PER_MINUTE));
-    // let today = yesterday.toISOString().split('T')[0];
-    // return ustUrl + today;
+    return ustUrl + lastBusinessDay.toISOString().split('T')[0];
   }
 
   /**
