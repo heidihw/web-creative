@@ -85,7 +85,7 @@ section#quotes article {
 /* buttons */
 
 /* div.button:has(button#img-toggle) { */
-div#img-toggle {
+div#img-toggle, div#get-music-btn {
   text-align: center;
 }
 

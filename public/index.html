@@ -52,12 +52,7 @@
             <li>Check out <a href="wushu.html">more</a> about wushu and our club!</li>
           </ul>
         </li>
-        <li><strong>Favorite music albums:</strong>
-          as of <span>today</span>
-          <div class="button" id="music">
-            <button>Show albums</button>
-          </div>
-        </li>
+        <li><strong>Favorite music albums:</strong> see the <a href="#albums">albums</a> section</li>
         <li><strong>Favorite music genre:</strong> kpop</li>
         <li><strong>Favorite music artist:</strong> NCT Dream</li>
         <li><strong>Favorite food:</strong> chive dumplings</li>
@@ -114,16 +109,62 @@
       <h2>The US in World Money</h2>
       <section class="two-col">
         <article>
-        <h3>From the World Bank:</h3>
+        <h3>From the World Bank</h3>
           <div class="button" id="world-banks">
             <button>Get World Banks data</button>
           </div>
         </article>
         <article>
-        <h3>From the US Treasury:</h3>
+        <h3>From the US Treasury</h3>
           <div class="button" id="us-treasury">
             <button>Get Treasury data</button>
           </div>
+        </article>
+      </section>
+    </section>
+
+    <section id="albums">
+      <h2>Albums</h2>
+      <p>Last updated <span>2024/03/27</span></p>
+      <section id="show-music">
+        <div class="button" id="get-music-btn">
+          <button>Get albums</button>
+        </div>
+        <ul>
+          <li>Vancouver Sleep Clinic - Revival</li>
+          <li>Kasbo - The Making of a Paracosm</li>
+          <li>Jaron - it's hard to see color [When You're So Impossibly Far Away*]</li>
+          <li>D.O. - Expectation</li>
+        </ul>
+      </section>
+      <section class="two-col">
+        <article id="add-music">
+          <h3>Add an album to the list</h3>
+          <form id="add-music-form">
+            <div>
+              <label for="artist">Name of artist: </label><br>
+              <input type="text" id="artist" name="artist" required>
+            </div>
+            <div>
+              <label for="title">Title of album: </label><br>
+              <input type="text" id="title" name="title" required>
+            </div><br>
+            <input type="submit" value="Add album">
+          </form>
+        </article>
+        <article id="remove-music">
+          <h3>Remove an album from the list</h3>
+          <form id="add-music-form">
+            <div>
+              <label for="artist">Name of artist: </label><br>
+              <input type="text" id="artist" name="artist" required>
+            </div>
+            <div>
+              <label for="title">Title of album: </label><br>
+              <input type="text" id="title" name="title" required>
+            </div><br>
+            <input type="submit" value="Remove album">
+          </form>
         </article>
       </section>
     </section>
