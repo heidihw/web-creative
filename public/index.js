@@ -64,7 +64,6 @@
 
       let ul = document.createElement('ul');
       content.appendChild(ul);
-      console.log(res);
       for (const i in res) {
         for (let j = 0; j < res[i].length; j++) {
           let li = document.createElement('li');
