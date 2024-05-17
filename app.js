@@ -18,7 +18,7 @@ const fs = require("fs").promises; // node module to interact with filesystem fo
 const multer = require("multer");
 
 // for application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true })) // built-in middleware
+app.use(express.urlencoded({extended: true})); // built-in middleware
 // for application/json
 app.use(express.json()); // built-in middleware
 // for multipart/form-data (required with FormData)
@@ -26,7 +26,8 @@ app.use(multer().none()); // requires the "multer" module
 
 app.get('/get', async function (req, res) {
   try {
-    let albums = await getAlbums();
+    let albums = await fs.readFile(ALBUMS_URL, 'utf8');
+    albums = JSON.parse(albums);
     res.type('json').send(albums);
   } catch (err) {
     handleError(err, res);
@@ -35,18 +36,19 @@ app.get('/get', async function (req, res) {
 
 app.post('/add', async function (req, res) {
   try {
-    let albums = getAlbums();
+    let albums = await fs.readFile(ALBUMS_URL, 'utf8');
+    albums = JSON.parse(albums);
     let artist = req.body.artist;
     let album = req.body.album;
     if (artist && album) {
       if (albums[artist]) {
         albums[artist].push(album);
-        await fs.writeFile('data/albums.json', JSON.stringify(albums));
+        await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
         res.type('text').send('Added an album by an existing artist');
       } else {
         albums[artist] = [];
         albums[artist].push(album);
-        await fs.writeFile('data/albums.json', JSON.stringify(albums));
+        await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
         res.type('text').send('Added an album by a new artist');
       }
     } else {
@@ -59,19 +61,20 @@ app.post('/add', async function (req, res) {
 
 app.post('/remove', async function (req, res) {
   try {
-    let albums = getAlbums();
+    let albums = await fs.readFile(ALBUMS_URL, 'utf8');
+    albums = JSON.parse(albums);
     let artist = req.body.artist;
     let album = req.body.album;
     if (artist && album) {
       if (albums[artist] && albums[artist].includes(album)) {
         if (albums[artist].length === 1) {
           delete albums[artist];
-          await fs.writeFile('data/albums.json', JSON.stringify(albums));
+          await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
           res.type('text').send('Removed the only album by the artist');
         } else {
           let i = albums[artist].indexOf(album);
           albums[artist].splice(i, 1);
-          await fs.writeFile('data/albums.json', JSON.stringify(albums));
+          await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
           res.type('text').send('Removed one of the albums by the artist');
         }
       } else {
@@ -84,12 +87,6 @@ app.post('/remove', async function (req, res) {
     handleError(err, res);
   }
 })
-
-async function getAlbums() {
-  let albums = await fs.readFile(ALBUMS_URL, 'utf8');
-  albums = JSON.parse(albums);
-  return albums;
-}
 
 function handleError(err, res) {
   if (err.code === 'ENOENT') {
