@@ -84,7 +84,7 @@
       res = await res.text();
       let success = document.createElement('p');
       success.textContent = res;
-      container.appendChild(success);
+      content.appendChild(success);
     } catch (err) {
       handleError(err, content);
     }
@@ -105,7 +105,7 @@
       res = await res.text();
       let success = document.createElement('p');
       success.textContent = res;
-      container.appendChild(success);
+      content.appendChild(success);
     } catch (err) {
       handleError(err, content);
     }
