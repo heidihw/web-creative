@@ -25,8 +25,6 @@
 
   const WB_URL = 'http://api.worldbank.org/v2/country/us';
   const UST_URL = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny';
-  const UST_SUNDAY = 0;
-  const UST_SATURDAY = 6;
 
   /**
    * Initializes the image button to toggle showing the images.
@@ -154,7 +152,7 @@
   /**
    * Calls the US Treasury API's debt endpoint for the most recent date for which the API has data
    * and updates the DOM with the queried data.
-   * Calls the helper function {@link makeUstUrl}.
+   * Calls the helper functions {@link makeUstUrl} and {@link displayUst}.
    */
   async function callUst() {
     this.disabled = true;
@@ -168,21 +166,8 @@
         let res = await fetch(makeUstUrl(urlDate));
         await statusCheck(res);
         data = await res.json();
-      } while (data['data'].length === 0)
-      let date = document.createElement('p');
-      date.textContent = 'Record Date: ' + data['data'][0]['record_date'];
-      content.appendChild(date);
-      let pub = document.createElement('p');
-      pub.textContent = 'Debt Held by the Public: ' + data['data'][0]['debt_held_public_amt'] + '$';
-      content.appendChild(pub);
-      let intragov = document.createElement('p');
-      intragov.textContent = 'Intragovernmental Holdings: ' + data['data'][0]['intragov_hold_amt'] +
-        '$';
-      content.appendChild(intragov);
-      let pubOut = document.createElement('p');
-      pubOut.textContent = 'Total Public Debt Outstanding: ' +
-        data['data'][0]['tot_pub_debt_out_amt'] + '$';
-      content.appendChild(pubOut);
+      } while (data['data'].length === 0);
+      displayUst(data, content);
     } catch (err) {
       handleError(err, content);
     }
@@ -200,6 +185,30 @@
     let dateCurrTimezone =
       new Date(dateUTC.getTime() - (dateUTC.getTimezoneOffset() * MILLISECONDS_PER_MINUTE));
     return ustUrl + dateCurrTimezone.toISOString().split('T')[0];
+  }
+
+  /**
+   * Helper function for {@link callUst}.
+   * Processes the data produced by the API call. Selects some of the data and displays it by
+   * updating the DOM.
+   * @param {JSON} data - the data returned by the API call.
+   * @param {HTMLElement} content - the DOM element within which to display the processed data.
+   */
+  function displayUst(data, content) {
+    let date = document.createElement('p');
+    date.textContent = 'Record Date: ' + data['data'][0]['record_date'];
+    content.appendChild(date);
+    let pub = document.createElement('p');
+    pub.textContent = 'Debt Held by the Public: ' + data['data'][0]['debt_held_public_amt'] + '$';
+    content.appendChild(pub);
+    let intragov = document.createElement('p');
+    intragov.textContent = 'Intragovernmental Holdings: ' + data['data'][0]['intragov_hold_amt'] +
+      '$';
+    content.appendChild(intragov);
+    let pubOut = document.createElement('p');
+    pubOut.textContent = 'Total Public Debt Outstanding: ' +
+      data['data'][0]['tot_pub_debt_out_amt'] + '$';
+    content.appendChild(pubOut);
   }
 
   /**
