@@ -4,7 +4,9 @@
  * Section: CSE 154 AG
  *
  * This is the index.js file for a personal website.
- * It allows the buttons to toggle the images and get data from the two APIs.
+ * The image button toggles showing the images.
+ * The external API buttons retrieve financial data from the two sites.
+ * The music buttons get, add, and remove albums in the list.
  */
 
 'use strict';
@@ -28,7 +30,7 @@
 
   /**
    * Initializes the image button to toggle showing the images.
-   * Initializes the external API buttons to retrieve financial data from the sites.
+   * Initializes the external API buttons to retrieve financial data from the two sites.
    * Initializes the music buttons to get, add, and remove albums in the list.
    */
   function init() {

@@ -3,8 +3,8 @@
  * Date:    2024 05 16
  * Section: CSE 154 AG
  *
- * This is the index.js file for a personal website.
- * It allows the buttons to toggle the images and get data from the two APIs.
+ * app.js is the code for an API that manages a list of music albums.
+ * It depends on the data/albums.json file that consists of a list of albums by each artist.
  */
 
 'use strict';
@@ -30,6 +30,11 @@ app.use(express.json()); // built-in middleware
 // for multipart/form-data (required with FormData)
 app.use(multer().none()); // requires the "multer" module
 
+/**
+ * Sends the full list of artists and their albums.
+ * @param {Parameters} req - the request Parameters that stores any params if provided.
+ * @param {Promise} res - the response Promise with which to send the completion message.
+ */
 app.get('/get', async function(req, res) {
   try {
     let albums = await fs.readFile(ALBUMS_URL, 'utf8');
@@ -40,62 +45,96 @@ app.get('/get', async function(req, res) {
   }
 });
 
+/**
+ * Attempts to add the given album by the given artist to the list.
+ * Sends an appropriate response message that describes the outcome of the addition attempt.
+ * @param {Parameters} req - the request Parameters that include the given artist and album.
+ * @param {Promise} res - the response Promise with which to send the completion message.
+ */
 app.post('/add', async function(req, res) {
   try {
     let albums = await fs.readFile(ALBUMS_URL, 'utf8');
     albums = JSON.parse(albums);
     let artist = req.body.artist;
     let album = req.body.album;
-    if (artist && album) {
-      if (albums[artist]) {
-        albums[artist].push(album);
-        await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-        res.type('text').send('Added an album by an existing artist');
-      } else {
-        albums[artist] = [];
-        albums[artist].push(album);
-        await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-        res.type('text').send('Added an album by a new artist');
-      }
-    } else {
-      res.type('text').status(CLIENT_ERR_STATUS)
-        .send('Missing required parameters');
-    }
+    await addAlbum(artist, album, res);
   } catch (err) {
     handleError(err, res);
   }
 });
 
+/**
+ * Attempts to add the given album by the given artist to the list.
+ * Sends an appropriate response message that describes the outcome of the addition attempt.
+ * @param {string} artist - the name of the artist whose album is to be added.
+ * @param {string} album - the name of the album to be added.
+ * @param {Promise} res - the response Promise with which to send the completion message.
+ */
+async function addAlbum(artist, album, res) {
+  if (artist && album) {
+    if (albums[artist]) {
+      albums[artist].push(album);
+      await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
+      res.type('text').send('Added an album by an existing artist');
+    } else {
+      albums[artist] = [];
+      albums[artist].push(album);
+      await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
+      res.type('text').send('Added an album by a new artist');
+    }
+  } else {
+    res.type('text').status(CLIENT_ERR_STATUS)
+      .send('Missing required parameters');
+  }
+}
+
+/**
+ * Attempts to remove the given album by the given artist from the list.
+ * Sends an appropriate response message that describes the outcome of the removal attempt.
+ * @param {Parameters} req - the request Parameters that include the given artist and album.
+ * @param {Promise} res - the response Promise with which to send the completion message.
+ */
 app.post('/remove', async function(req, res) {
   try {
     let albums = await fs.readFile(ALBUMS_URL, 'utf8');
     albums = JSON.parse(albums);
     let artist = req.body.artist;
     let album = req.body.album;
-    if (artist && album) {
-      if (albums[artist] && albums[artist].includes(album)) {
-        if (albums[artist].length === 1) {
-          delete albums[artist];
-          await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-          res.type('text').send('Removed the only album by the artist');
-        } else {
-          let i = albums[artist].indexOf(album);
-          albums[artist].splice(i, 1);
-          await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-          res.type('text').send('Removed one of the albums by the artist');
-        }
-      } else {
-        res.type('text').status(CLIENT_ERR_STATUS)
-          .send('Could not find the album by the artist');
-      }
-    } else {
-      res.type('text').status(CLIENT_ERR_STATUS)
-        .send('Missing required parameters');
-    }
+    await removeAlbum(artist, album, res);
   } catch (err) {
     handleError(err, res);
   }
 });
+
+/**
+ * Attempts to remove the given album by the given artist from the list.
+ * Sends an appropriate response message that describes the outcome of the removal attempt.
+ * @param {string} artist - the name of the artist whose album is to be removed.
+ * @param {string} album - the name of the album to be removed.
+ * @param {Promise} res - the response Promise with which to send the completion message.
+ */
+async function removeAlbum(artist, album, res) {
+  if (artist && album) {
+    if (albums[artist] && albums[artist].includes(album)) {
+      if (albums[artist].length === 1) {
+        delete albums[artist];
+        await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
+        res.type('text').send('Removed the only album by the artist');
+      } else {
+        let i = albums[artist].indexOf(album);
+        albums[artist].splice(i, 1);
+        await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
+        res.type('text').send('Removed one of the albums by the artist');
+      }
+    } else {
+      res.type('text').status(CLIENT_ERR_STATUS)
+        .send('Could not find the album by the artist');
+    }
+  } else {
+    res.type('text').status(CLIENT_ERR_STATUS)
+      .send('Missing required parameters');
+  }
+}
 
 /**
  * Sends the appropriate error message for the situation with the status code for a server error.
