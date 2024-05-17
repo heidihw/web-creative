@@ -9,56 +9,99 @@
 
 'use strict';
 
+const ALBUMS_URL = 'data/albums.json';
+
 const express = require('express');
 const app = express();
-const multer = require('multer');
-const fs = require('fs').promises;
 
-app.use(multer().none());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const fs = require("fs").promises; // node module to interact with filesystem for file i/o
+const multer = require("multer");
 
-app.get('/music', async (req, res) => {
+// for application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true })) // built-in middleware
+// for application/json
+app.use(express.json()); // built-in middleware
+// for multipart/form-data (required with FormData)
+app.use(multer().none()); // requires the "multer" module
+
+app.get('/get', async function (req, res) {
   try {
-    res.type('json').send(JSON.parse(await fs.readFile('data/music.json', 'utf8')));
+    let albums = await getAlbums();
+    res.type('json').send(albums);
   } catch (err) {
-    res.type('text').status(500).send('Failed to get music data.');
+    handleError(err, res);
   }
 });
 
-app.get('/music/rand', (req, res) => {
-
-  res.type('text').send('welcome to my first endpoint!!!!!!');
-});
-
-app.post('/add', function (req, res) {
-  if (!req.body.artist || !req.body.album) {
-    res.status(400).send('Missing required parameters');
+app.post('/add', async function (req, res) {
+  try {
+    let albums = getAlbums();
+    let artist = req.body.artist;
+    let album = req.body.album;
+    if (artist && album) {
+      if (albums[artist]) {
+        albums[artist].push(album);
+        await fs.writeFile('data/albums.json', JSON.stringify(albums));
+        res.type('text').send('Added an album by an existing artist');
+      } else {
+        albums[artist] = [];
+        albums[artist].push(album);
+        await fs.writeFile('data/albums.json', JSON.stringify(albums));
+        res.type('text').send('Added an album by a new artist');
+      }
+    } else {
+      res.type('text').status(400).send('Missing required parameters');
+    }
+  } catch (err) {
+    handleError(err, res);
   }
-  let response = 'added information for designated movie';
-  if (MOVIEDATA[req.body.movie]) {
-    response = 'updated information for designated movie';
-  }
-  MOVIEDATA[req.body.movie] = {
-    'release-year': parseInt(req.body.year),
-    'featured-song': req.body.song,
-    'rotten-tomatoes': parseFloat(req.body.rating)
-  };
-  console.log(MOVIEDATA);
-  res.type('text').send(response);
 })
 
-// app.post('/update/otter', (req, res) => {
-//   let newType = req.body.type;
-//   let newDescription = req.body.description;
-//   if (newType && newDescription) {
-//     OTTER_TYPES[newType] = newDescription;
-//     res.json(OTTER_TYPES);
-//   } else {
-//     res.type('text').status(400).send('missing required params');
-//   }
-// });
+app.post('/remove', async function (req, res) {
+  try {
+    let albums = getAlbums();
+    let artist = req.body.artist;
+    let album = req.body.album;
+    if (artist && album) {
+      if (albums[artist] && albums[artist].includes(album)) {
+        if (albums[artist].length === 1) {
+          delete albums[artist];
+          await fs.writeFile('data/albums.json', JSON.stringify(albums));
+          res.type('text').send('Removed the only album by the artist');
+        } else {
+          let i = albums[artist].indexOf(album);
+          albums[artist].splice(i, 1);
+          await fs.writeFile('data/albums.json', JSON.stringify(albums));
+          res.type('text').send('Removed one of the albums by the artist');
+        }
+      } else {
+        res.type('text').status(400).send('Could not find the album by the artist');
+      }
+    } else {
+      res.type('text').status(400).send('Missing required parameters');
+    }
+  } catch (err) {
+    handleError(err, res);
+  }
+})
 
+async function getAlbums() {
+  let albums = await fs.readFile(ALBUMS_URL, 'utf8');
+  albums = JSON.parse(albums);
+  return albums;
+}
+
+function handleError(err, res) {
+  if (err.code === 'ENOENT') {
+    res.type('text').status(500).send('File not found on the server');
+  } else {
+    res.type('text').status(500).send('Something went wrong on the server');
+  }
+}
+
+// tells the code to serve static files in a directory called 'public'
 app.use(express.static('public'));
+// specify the port to listen on
 const PORT = process.env.PORT || 8000;
+// tells the application to run on the specified port
 app.listen(PORT);

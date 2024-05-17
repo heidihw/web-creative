@@ -48,20 +48,16 @@
     let content = document.getElementById('get-album-content');
     content.innerHTML = '';
     try {
-      let res = await fetch('/music');
+      let res = await fetch('/get');
       await statusCheck(res);
       res = await res.text();
 
-      console.log(res);
-
+      /** TODO */
+      let success = document.createElement('p');
+      success.textContent = res;
+      content.appendChild(success);
     } catch (err) {
-      if (err.state === 500) {
-        content.innerHTML = '';
-        console.log('The server encountered an error')
-      } else {
-        console.log(err);
-        handleError(content);
-      }
+      handleMusicError(err, content);
     }
   }
 
@@ -74,17 +70,9 @@
       let res = await fetch('/add', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      let success = document.createElement('p');
-      success.textContent = 'Album added to the list.';
-      content.appendChild(success);
+      displayPost(res, content);
     } catch (err) {
-      if (err.state === 500) {
-        content.innerHTML = '';
-        console.log('The server encountered an error')
-      } else {
-        console.log(err);
-        handleError(content);
-      }
+      handleMusicError(err, content);
     }
   }
 
@@ -97,18 +85,22 @@
       let res = await fetch('/remove', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      let success = document.createElement('p');
-      success.textContent = 'Album removed from the list.';
-      content.appendChild(success);
+      displayPost(res, content);
     } catch (err) {
-      if (err.state === 500) {
-        content.innerHTML = '';
-        console.log('The server encountered an error')
-      } else {
-        console.log(err);
-        handleError(content);
-      }
+      handleMusicError(err, content);
     }
+  }
+
+  function displayPost(res, container) {
+    let success = document.createElement('p');
+    success.textContent = res;
+    container.appendChild(success);
+  }
+
+  function handleMusicError(err, container) {
+    let errMsg = document.createElement('p');
+    errMsg.textContent = err.message;
+    container.appendChild(errMsg);
   }
 
   /**
@@ -213,7 +205,7 @@
    */
   function handleError(container) {
     let errMsg = document.createElement('p');
-    errMsg.textContent = 'There was an error retrieving the requested data.';
+    errMsg.textContent = 'There was an error executing the requested action';
     container.appendChild(errMsg);
   }
 
