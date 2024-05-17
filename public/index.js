@@ -129,7 +129,7 @@
     content.innerHTML = '';
     try {
       let res = await fetch(wbUrl);
-      statusCheck(res);
+      await statusCheck(res);
       res = await res.json();
 
       let country = document.createElement('p');
@@ -163,7 +163,7 @@
     content.innerHTML = '';
     try {
       let res = await fetch(ustUrl);
-      statusCheck(res);
+      await statusCheck(res);
       let data = await res.json();
 
       let date = document.createElement('p');
