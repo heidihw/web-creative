@@ -60,12 +60,20 @@
     try {
       let res = await fetch('/get');
       await statusCheck(res);
-      res = await res.text();
+      res = await res.json();
 
-      /** TODO */
-      let success = document.createElement('p');
-      success.textContent = res;
-      content.appendChild(success);
+      let ul = document.createElement('ul');
+      content.appendChild(ul);
+      console.log(res);
+      for (const i in res) {
+        console.log(i);
+        for (let j = 0; j < res[i].length; j++) {
+          console.log(j);
+          let li = document.createElement('li');
+          li.textContent = i + ' - ' + res[i][j];
+          ul.appendChild(li);
+        }
+      }
     } catch (err) {
       handleError(err, content);
     }

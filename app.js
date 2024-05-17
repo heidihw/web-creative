@@ -4,7 +4,7 @@
  * Section: CSE 154 AG
  *
  * app.js is the code for an API that manages a list of music albums.
- * It depends on the `data/albums.json` file that consists of a list of albums by each artist.
+ * It depends on the data/albums.json file that consists of a list of albums by each artist.
  */
 
 'use strict';
@@ -57,7 +57,7 @@ app.post('/add', async function(req, res) {
     albums = JSON.parse(albums);
     let artist = req.body.artist;
     let album = req.body.album;
-    await addAlbum(artist, album, res);
+    await addAlbum(artist, album, albums, res);
   } catch (err) {
     handleError(err, res);
   }
@@ -68,9 +68,10 @@ app.post('/add', async function(req, res) {
  * Sends an appropriate response message that describes the outcome of the addition attempt.
  * @param {string} artist - the name of the artist whose album is to be added.
  * @param {string} album - the name of the album to be added.
+ * @param {JSON} albums - the list of artists and their albums.
  * @param {Promise} res - the response Promise with which to send the completion message.
  */
-async function addAlbum(artist, album, res) {
+async function addAlbum(artist, album, albums, res) {
   if (artist && album) {
     if (albums[artist]) {
       albums[artist].push(album);
@@ -100,7 +101,7 @@ app.post('/remove', async function(req, res) {
     albums = JSON.parse(albums);
     let artist = req.body.artist;
     let album = req.body.album;
-    await removeAlbum(artist, album, res);
+    await removeAlbum(artist, album, albums, res);
   } catch (err) {
     handleError(err, res);
   }
@@ -111,9 +112,10 @@ app.post('/remove', async function(req, res) {
  * Sends an appropriate response message that describes the outcome of the removal attempt.
  * @param {string} artist - the name of the artist whose album is to be removed.
  * @param {string} album - the name of the album to be removed.
+ * @param {JSON} albums - the list of artists and their albums.
  * @param {Promise} res - the response Promise with which to send the completion message.
  */
-async function removeAlbum(artist, album, res) {
+async function removeAlbum(artist, album, albums, res) {
   if (artist && album) {
     if (albums[artist] && albums[artist].includes(album)) {
       if (albums[artist].length === 1) {
