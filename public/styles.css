@@ -1,6 +1,6 @@
 /*
   Name:    Heidi Wang
-  Date:    2024 04 16
+  Date:    2024 05 16 CP4
   Section: CSE 154 AG
 
   This is the styles.css file for a personal website.
@@ -24,6 +24,15 @@ section {
   background-color: hsl(39, 94%, 83%);
   padding: 1% 2%;
   margin: 2% 0%;
+}
+
+section.two-col {
+  display: flex;
+}
+
+section#quotes article {
+  display: flex;
+  align-items: end;
 }
 
 article {
@@ -71,15 +80,6 @@ a:visited {
 
 img {
   width: 40%;
-}
-
-section.two-col {
-  display: flex;
-}
-
-section#quotes article {
-  display: flex;
-  align-items: end;
 }
 
 /* buttons */

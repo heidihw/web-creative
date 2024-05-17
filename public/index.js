@@ -1,6 +1,6 @@
 /**
  * Name:    Heidi Wang
- * Date:    2024 04 16
+ * Date:    2024 05 16 CP4
  * Section: CSE 154 AG
  *
  * This is the index.js file for a personal website.
@@ -152,20 +152,23 @@
   }
 
   /**
-   * Calls the US Treasury API's debt endpoint for today's date and updates the DOM with the
-   * queried data.
+   * Calls the US Treasury API's debt endpoint for the most recent date for which the API has data
+   * and updates the DOM with the queried data.
    * Calls the helper function {@link makeUstUrl}.
    */
   async function callUst() {
-    let ustUrl = makeUstUrl();
     this.disabled = true;
     let content = document.getElementById('ust-content');
     content.innerHTML = '';
+    let urlDate = Date.now();
+    let data;
     try {
-      let res = await fetch(ustUrl);
-      await statusCheck(res);
-      let data = await res.json();
-
+      do {
+        urlDate = urlDate - MILLISECONDS_PER_DAY;
+        let res = await fetch(makeUstUrl(urlDate));
+        await statusCheck(res);
+        data = await res.json();
+      } while (data['data'].length === 0)
       let date = document.createElement('p');
       date.textContent = 'Record Date: ' + data['data'][0]['record_date'];
       content.appendChild(date);
@@ -187,19 +190,16 @@
 
   /**
    * Helper function for {@link callUst}.
-   * Composes the URL for the call to the US Treasury API's debt endpoint for today's date.
+   * Composes the URL for the call to the US Treasury API's debt endpoint for a given date.
+   * @param {number} urlDate - the date to convert into the correct format for the URL.
    * @returns {string} url that was composed.
    */
-  function makeUstUrl() {
+  function makeUstUrl(urlDate) {
     let ustUrl = UST_URL + '?filter=record_date:eq:';
-    let currDateUTC = new Date(Date.now());
-    let currDateCurrTimezone =
-      new Date(currDateUTC.getTime() - (currDateUTC.getTimezoneOffset() * MILLISECONDS_PER_MINUTE));
-    let lastBusinessDay = new Date(currDateCurrTimezone.getTime() - MILLISECONDS_PER_DAY);
-    while (lastBusinessDay.getDay() === UST_SUNDAY || lastBusinessDay.getDay() === UST_SATURDAY) {
-      lastBusinessDay = new Date(lastBusinessDay.getTime() - MILLISECONDS_PER_DAY);
-    }
-    return ustUrl + lastBusinessDay.toISOString().split('T')[0];
+    let dateUTC = new Date(urlDate);
+    let dateCurrTimezone =
+      new Date(dateUTC.getTime() - (dateUTC.getTimezoneOffset() * MILLISECONDS_PER_MINUTE));
+    return ustUrl + dateCurrTimezone.toISOString().split('T')[0];
   }
 
   /**
@@ -243,8 +243,7 @@
    * @param {button} button - the button that was clicked to call this function.
    */
   function hideImgs(button) {
-    let toShow = 'Click to show the images below';
-    button.textContent = toShow;
+    button.textContent = 'Click to show the images below';
     button.classList.remove('clicked');
     for (let i = 0; i < images.length; i++) {
       parents[i].removeChild(images[i]);
@@ -256,8 +255,7 @@
    * @param {button} button - the button that was clicked to call this function.
    */
   function showImgs(button) {
-    let toHide = 'Click to hide the images below';
-    button.textContent = toHide;
+    button.textContent = 'Click to hide the images below';
     button.classList.add('clicked');
     for (let i = 0; i < images.length; i++) {
       parents[i].appendChild(images[i]);
