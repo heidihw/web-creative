@@ -4,7 +4,7 @@
  * Section: CSE 154 AG
  *
  * app.js is the code for an API that manages a list of music albums.
- * It depends on the data/albums.json file that consists of a list of albums by each artist.
+ * It depends on the `data/albums.json` file that consists of a list of albums by each artist.
  */
 
 'use strict';
@@ -31,7 +31,7 @@ app.use(express.json()); // built-in middleware
 app.use(multer().none()); // requires the "multer" module
 
 /**
- * Sends the full list of artists and their albums.
+ * Gets the full list of artists and their albums.
  * @param {Parameters} req - the request Parameters that stores any params if provided.
  * @param {Promise} res - the response Promise with which to send the completion message.
  */
@@ -124,7 +124,7 @@ async function removeAlbum(artist, album, res) {
         let i = albums[artist].indexOf(album);
         albums[artist].splice(i, 1);
         await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-        res.type('text').send('Removed one of the albums by the artist');
+        res.type('text').send('Removed the given album by the artist');
       }
     } else {
       res.type('text').status(CLIENT_ERR_STATUS)

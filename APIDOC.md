@@ -1,69 +1,69 @@
-# *FILL IN NAME* API Documentation
-*Fill in a short description here about the API's purpose.*
+# Heidi Wang API Documentation
+This is an API that manages a list of music albums. It depends on the `data/albums.json` file that consists of a list of albums by each artist.
 
-## *Fill in Endpoint 1 Title*
-**Request Format:** *Fill in example request format, i.e. the path*
+## Get
+**Request Format:** get
 
-**Request Type:** *Fill in request type*
-
-**Returned Data Format**: Plain Text
-
-**Description:** *Fill in description*
-
-**Example Request:** *Fill in example request*
-
-**Example Response:**
-*Fill in example response in the ticks*
-
-```
-
-```
-
-**Error Handling:**
-*Fill in an example of the error handling*
-
-
-## *Fill in Endpoint 2 Title*
-**Request Format:** *Fill in example request format, i.e. the path*
-
-**Request Type:** *Fill in request type*
+**Request Type:** GET
 
 **Returned Data Format**: JSON
 
-**Description:** *Fill in description*
+**Description:** Gets the full list of artists and their albums.
 
-**Example Request:** *Fill in example request*
+**Example Request:** get
 
 **Example Response:**
-*Fill in example response in the {}*
 
 ```json
 {
-
+  "Vancouver Sleep Clinic": [ "Revival" ],
+  "Kasbo": [ "The Making of a Paracosm" ],
+  "Jaron": [ "it's hard to see color [When You're So Impossibly Far Away*]" ],
+  "D.O.": [ "Expectation" ]
 }
 ```
 
 **Error Handling:**
-*Fill in an example of the error handling*
+File not found on the server
 
 
-## *Fill in Endpoint 3 Title*
-**Request Format:** *Fill in example request format, i.e. the path*
+## Add
+**Request Format:** add
 
-**Request Type:** *Fill in request type*
+**Request Type:** POST
 
 **Returned Data Format**: Plain Text
 
-**Description:** *Fill in description*
+**Description:** Attempts to add the given album by the given artist to the list. Sends an appropriate response message that describes the outcome of the addition attempt.
 
-**Example Request:** *Fill in example request*
+**Example Request:** add with POST parameters of `artist=Said The Sky` and `album=Sentiment`
 
 **Example Response:**
-*Fill in example response in the {}*
 
 ```
-
+Added an album by a new artist
 ```
 
 **Error Handling:**
-*Fill in an example of the error handling*
+Missing required parameters
+
+
+## Remove
+**Request Format:** remove
+
+**Request Type:** POST
+
+**Returned Data Format**: Plain Text
+
+**Description:** Attempts to remove the given album by the given artist from the list. Sends an appropriate response message that describes the outcome of the removal attempt.
+
+**Example Request:** remove with POST parameters of `artist=D.O.` and `album=Expectation`
+
+**Example Response:**
+
+```
+Removed the only album by the artist
+```
+
+**Error Handling:**
+Could not find the album by the artist
