@@ -39,20 +39,74 @@
     document.querySelector('div#world-banks button').addEventListener('click', callWb);
     document.querySelector('div#us-treasury button').addEventListener('click', callUst);
 
-    document.querySelector('div#music button').addEventListener('click', getMusic);
+    document.querySelector('div#get-album-btn button').addEventListener('click', getMusic);
+    document.getElementById('add-album-form').addEventListener('submit', addMusic);
+    document.getElementById('remove-album-form').addEventListener('submit', removeMusic);
   }
 
   async function getMusic() {
-    let article = this.parentElement.parentElement;
+    let content = document.getElementById('get-album-content');
+    content.innerHTML = '';
     try {
       let res = await fetch('/music');
+      await statusCheck(res);
+      res = await res.text();
+
       console.log(res);
+
     } catch (err) {
       if (err.state === 500) {
+        content.innerHTML = '';
         console.log('The server encountered an error')
       } else {
         console.log(err);
-        handleError(article);
+        handleError(content);
+      }
+    }
+  }
+
+  async function addMusic(evt) {
+    evt.preventDefault();
+    let content = document.getElementById('add-album-content');
+    content.innerHTML = '';
+    try {
+      let data = new FormData(document.getElementById('add-album-form'));
+      let res = await fetch('/add', {method: 'POST', body: data});
+      await statusCheck(res);
+      res = await res.text();
+      let success = document.createElement('p');
+      success.textContent = 'Album added to the list.';
+      content.appendChild(success);
+    } catch (err) {
+      if (err.state === 500) {
+        content.innerHTML = '';
+        console.log('The server encountered an error')
+      } else {
+        console.log(err);
+        handleError(content);
+      }
+    }
+  }
+
+  async function removeMusic(evt) {
+    evt.preventDefault();
+    let content = document.getElementById('remove-album-content');
+    content.innerHTML = '';
+    try {
+      let data = new FormData(document.getElementById('remove-album-form'));
+      let res = await fetch('/remove', {method: 'POST', body: data});
+      await statusCheck(res);
+      res = await res.text();
+      let success = document.createElement('p');
+      success.textContent = 'Album removed from the list.';
+      content.appendChild(success);
+    } catch (err) {
+      if (err.state === 500) {
+        content.innerHTML = '';
+        console.log('The server encountered an error')
+      } else {
+        console.log(err);
+        handleError(content);
       }
     }
   }
@@ -64,7 +118,8 @@
   async function callWb() {
     let wbUrl = 'http://api.worldbank.org/v2/country/us?format=json';
     this.disabled = true;
-    let article = this.parentElement.parentElement;
+    let content = document.getElementById('wb-content');
+    content.innerHTML = '';
     try {
       let res = await fetch(wbUrl);
       statusCheck(res);
@@ -72,20 +127,20 @@
 
       let country = document.createElement('p');
       country.textContent = 'Country: ' + res[1][0]['name'];
-      article.appendChild(country);
+      content.appendChild(country);
       let income = document.createElement('p');
       income.textContent = 'Income Level: ' + res[1][0]['incomeLevel']['value'];
-      article.appendChild(income);
+      content.appendChild(income);
       let incomeDesc = document.createElement('p');
       incomeDesc.textContent = 'A high-income economy is defined by the World Bank as a country ' +
         'with a gross national income per capita of US$13,845 or more in 2022.';
-      article.appendChild(incomeDesc);
+      content.appendChild(incomeDesc);
       let incomeSource = document.createElement('a');
       incomeSource.textContent = 'Definition of high-income economy from Wikipedia.';
       incomeSource.href = 'https://en.wikipedia.org/wiki/World_Bank_high-income_economy';
-      article.appendChild(incomeSource);
+      content.appendChild(incomeSource);
     } catch (err) {
-      handleError(article);
+      handleError(content);
     }
   }
 
@@ -96,7 +151,8 @@
    */
   async function callUst() {
     this.disabled = true;
-    let article = this.parentElement.parentElement;
+    let content = document.getElementById('ust-content');
+    content.innerHTML = '';
     try {
       let res = await fetch(makeUstUrl());
       statusCheck(res);
@@ -104,20 +160,20 @@
 
       let date = document.createElement('p');
       date.textContent = 'Record Date: ' + data['data'][0]['record_date'];
-      article.appendChild(date);
+      content.appendChild(date);
       let pub = document.createElement('p');
       pub.textContent = 'Debt Held by the Public: ' + data['data'][0]['debt_held_public_amt'] + '$';
-      article.appendChild(pub);
+      content.appendChild(pub);
       let intragov = document.createElement('p');
       intragov.textContent = 'Intragovernmental Holdings: ' + data['data'][0]['intragov_hold_amt'] +
         '$';
-      article.appendChild(intragov);
+      content.appendChild(intragov);
       let pubOut = document.createElement('p');
       pubOut.textContent = 'Total Public Debt Outstanding: ' +
         data['data'][0]['tot_pub_debt_out_amt'] + '$';
-      article.appendChild(pubOut);
+      content.appendChild(pubOut);
     } catch (err) {
-      handleError(article);
+      handleError(content);
     }
   }
 
@@ -153,12 +209,12 @@
   /**
    * Updates the DOM to display the message in the given error.
    * @param {exception} err - the contents of the error.
-   * @param {article} article - the DOM element within which to display the error message.
+   * @param {HTMLElement} container - the DOM element within which to display the error message.
    */
-  function handleError(article) {
+  function handleError(container) {
     let errMsg = document.createElement('p');
     errMsg.textContent = 'There was an error retrieving the requested data.';
-    article.appendChild(errMsg);
+    container.appendChild(errMsg);
   }
 
   /**

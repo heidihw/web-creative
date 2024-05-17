@@ -31,6 +31,22 @@ app.get('/music/rand', (req, res) => {
   res.type('text').send('welcome to my first endpoint!!!!!!');
 });
 
+app.post('/add', function (req, res) {
+  if (!req.body.artist || !req.body.album) {
+    res.status(400).send('Missing required parameters');
+  }
+  let response = 'added information for designated movie';
+  if (MOVIEDATA[req.body.movie]) {
+    response = 'updated information for designated movie';
+  }
+  MOVIEDATA[req.body.movie] = {
+    'release-year': parseInt(req.body.year),
+    'featured-song': req.body.song,
+    'rotten-tomatoes': parseFloat(req.body.rating)
+  };
+  console.log(MOVIEDATA);
+  res.type('text').send(response);
+})
 
 // app.post('/update/otter', (req, res) => {
 //   let newType = req.body.type;
