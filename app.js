@@ -30,7 +30,7 @@ app.use(express.json()); // built-in middleware
 // for multipart/form-data (required with FormData)
 app.use(multer().none()); // requires the "multer" module
 
-app.get('/get', async function (req, res) {
+app.get('/get', async function(req, res) {
   try {
     let albums = await fs.readFile(ALBUMS_URL, 'utf8');
     albums = JSON.parse(albums);
@@ -40,7 +40,7 @@ app.get('/get', async function (req, res) {
   }
 });
 
-app.post('/add', async function (req, res) {
+app.post('/add', async function(req, res) {
   try {
     let albums = await fs.readFile(ALBUMS_URL, 'utf8');
     albums = JSON.parse(albums);
@@ -59,14 +59,14 @@ app.post('/add', async function (req, res) {
       }
     } else {
       res.type('text').status(CLIENT_ERR_STATUS)
-         .send('Missing required parameters');
+        .send('Missing required parameters');
     }
   } catch (err) {
     handleError(err, res);
   }
-})
+});
 
-app.post('/remove', async function (req, res) {
+app.post('/remove', async function(req, res) {
   try {
     let albums = await fs.readFile(ALBUMS_URL, 'utf8');
     albums = JSON.parse(albums);
@@ -86,16 +86,16 @@ app.post('/remove', async function (req, res) {
         }
       } else {
         res.type('text').status(CLIENT_ERR_STATUS)
-           .send('Could not find the album by the artist');
+          .send('Could not find the album by the artist');
       }
     } else {
       res.type('text').status(CLIENT_ERR_STATUS)
-         .send('Missing required parameters');
+        .send('Missing required parameters');
     }
   } catch (err) {
     handleError(err, res);
   }
-})
+});
 
 /**
  * Sends the appropriate error message for the situation with the status code for a server error.
@@ -105,10 +105,10 @@ app.post('/remove', async function (req, res) {
 function handleError(err, res) {
   if (err.code === 'ENOENT') {
     res.type('text').status(SERVER_ERR_STATUS)
-       .send('File not found on the server');
+      .send('File not found on the server');
   } else {
     res.type('text').status(SERVER_ERR_STATUS)
-       .send('Something went wrong on the server');
+      .send('Something went wrong on the server');
   }
 }
 

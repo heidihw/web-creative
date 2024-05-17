@@ -27,9 +27,9 @@
   const UST_SATURDAY = 6;
 
   /**
-   * Sets up the lists for the image button to function, including lists of the images
-   * and their parents.
-   * AddEventListeners for the image and API buttons.
+   * Initializes the image button to toggle showing the images.
+   * Initializes the external API buttons to retrieve financial data from the sites.
+   * Initializes the music buttons to get, add, and remove albums in the list.
    */
   function init() {
     images = document.querySelectorAll('img');
@@ -49,6 +49,9 @@
     document.getElementById('remove-album-form').addEventListener('submit', removeMusic);
   }
 
+  /**
+   * Gets the list of albums and displays it formatted in an unordered list of artist and album.
+   */
   async function getMusic() {
     let content = document.getElementById('get-album-content');
     content.innerHTML = '';
@@ -62,10 +65,14 @@
       success.textContent = res;
       content.appendChild(success);
     } catch (err) {
-      handleMusicError(err, content);
+      handleError(err, content);
     }
   }
 
+  /**
+   * Adds an album to the list and displays the appropriate message.
+   * @param {Event} evt - the form submission event to prevent page reloading.
+   */
   async function addMusic(evt) {
     evt.preventDefault();
     let content = document.getElementById('add-album-content');
@@ -75,12 +82,18 @@
       let res = await fetch('/add', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      displayPost(res, content);
+      let success = document.createElement('p');
+      success.textContent = res;
+      container.appendChild(success);
     } catch (err) {
-      handleMusicError(err, content);
+      handleError(err, content);
     }
   }
 
+  /**
+   * Removes an album from the list and displays the appropriate message.
+   * @param {Event} evt - the form submission event to prevent page reloading.
+   */
   async function removeMusic(evt) {
     evt.preventDefault();
     let content = document.getElementById('remove-album-content');
@@ -90,22 +103,12 @@
       let res = await fetch('/remove', {method: 'POST', body: data});
       await statusCheck(res);
       res = await res.text();
-      displayPost(res, content);
+      let success = document.createElement('p');
+      success.textContent = res;
+      container.appendChild(success);
     } catch (err) {
-      handleMusicError(err, content);
+      handleError(err, content);
     }
-  }
-
-  function displayPost(res, container) {
-    let success = document.createElement('p');
-    success.textContent = res;
-    container.appendChild(success);
-  }
-
-  function handleMusicError(err, container) {
-    let errMsg = document.createElement('p');
-    errMsg.textContent = err.message;
-    container.appendChild(errMsg);
   }
 
   /**
