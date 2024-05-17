@@ -11,6 +11,10 @@
 
 const ALBUMS_URL = 'data/albums.json';
 
+const CLIENT_ERR_STATUS = 400;
+const SERVER_ERR_STATUS = 500;
+const LOCAL_PORT = 8000;
+
 const express = require('express');
 const app = express();
 
@@ -19,8 +23,10 @@ const multer = require("multer");
 
 // for application/x-www-form-urlencoded
 app.use(express.urlencoded({extended: true})); // built-in middleware
+
 // for application/json
 app.use(express.json()); // built-in middleware
+
 // for multipart/form-data (required with FormData)
 app.use(multer().none()); // requires the "multer" module
 
@@ -52,7 +58,8 @@ app.post('/add', async function (req, res) {
         res.type('text').send('Added an album by a new artist');
       }
     } else {
-      res.type('text').status(400).send('Missing required parameters');
+      res.type('text').status(CLIENT_ERR_STATUS)
+         .send('Missing required parameters');
     }
   } catch (err) {
     handleError(err, res);
@@ -78,27 +85,38 @@ app.post('/remove', async function (req, res) {
           res.type('text').send('Removed one of the albums by the artist');
         }
       } else {
-        res.type('text').status(400).send('Could not find the album by the artist');
+        res.type('text').status(CLIENT_ERR_STATUS)
+           .send('Could not find the album by the artist');
       }
     } else {
-      res.type('text').status(400).send('Missing required parameters');
+      res.type('text').status(CLIENT_ERR_STATUS)
+         .send('Missing required parameters');
     }
   } catch (err) {
     handleError(err, res);
   }
 })
 
+/**
+ * Sends the appropriate error message for the situation with the status code for a server error.
+ * @param {exception} err - the contents of the error.
+ * @param {Promise} res - the response Promise with which to send the error.
+ */
 function handleError(err, res) {
   if (err.code === 'ENOENT') {
-    res.type('text').status(500).send('File not found on the server');
+    res.type('text').status(SERVER_ERR_STATUS)
+       .send('File not found on the server');
   } else {
-    res.type('text').status(500).send('Something went wrong on the server');
+    res.type('text').status(SERVER_ERR_STATUS)
+       .send('Something went wrong on the server');
   }
 }
 
 // tells the code to serve static files in a directory called 'public'
 app.use(express.static('public'));
+
 // specify the port to listen on
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || LOCAL_PORT;
+
 // tells the application to run on the specified port
 app.listen(PORT);

@@ -21,6 +21,11 @@
   const HOURS_PER_DAY = 24;
   const MILLISECONDS_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR * MILLISECONDS_PER_MINUTE;
 
+  const WB_URL = 'http://api.worldbank.org/v2/country/us';
+  const UST_URL = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny';
+  const UST_SUNDAY = 0;
+  const UST_SATURDAY = 6;
+
   /**
    * Sets up the lists for the image button to function, including lists of the images
    * and their parents.
@@ -108,7 +113,7 @@
    * queried data.
    */
   async function callWb() {
-    let wbUrl = 'http://api.worldbank.org/v2/country/us?format=json';
+    let wbUrl = WB_URL + '?format=json';
     this.disabled = true;
     let content = document.getElementById('wb-content');
     content.innerHTML = '';
@@ -132,7 +137,7 @@
       incomeSource.href = 'https://en.wikipedia.org/wiki/World_Bank_high-income_economy';
       content.appendChild(incomeSource);
     } catch (err) {
-      handleError(content);
+      handleError(err, content);
     }
   }
 
@@ -142,11 +147,12 @@
    * Calls the helper function {@link makeUstUrl}.
    */
   async function callUst() {
+    let ustUrl = makeUstUrl();
     this.disabled = true;
     let content = document.getElementById('ust-content');
     content.innerHTML = '';
     try {
-      let res = await fetch(makeUstUrl());
+      let res = await fetch(ustUrl);
       statusCheck(res);
       let data = await res.json();
 
@@ -165,7 +171,7 @@
         data['data'][0]['tot_pub_debt_out_amt'] + '$';
       content.appendChild(pubOut);
     } catch (err) {
-      handleError(content);
+      handleError(err, content);
     }
   }
 
@@ -175,12 +181,12 @@
    * @returns {string} url that was composed.
    */
   function makeUstUrl() {
-    let ustUrl = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?filter=record_date:eq:';
+    let ustUrl = UST_URL + '?filter=record_date:eq:';
     let currDateUTC = new Date(Date.now());
     let currDateCurrTimezone =
       new Date(currDateUTC.getTime() - (currDateUTC.getTimezoneOffset() * MILLISECONDS_PER_MINUTE));
     let lastBusinessDay = new Date(currDateCurrTimezone.getTime() - MILLISECONDS_PER_DAY);
-    while (lastBusinessDay.getDay() === 0 || lastBusinessDay.getDay() === 6) {
+    while (lastBusinessDay.getDay() === UST_SUNDAY || lastBusinessDay.getDay() === UST_SATURDAY) {
       lastBusinessDay = new Date(lastBusinessDay.getTime() - MILLISECONDS_PER_DAY);
     }
     return ustUrl + lastBusinessDay.toISOString().split('T')[0];
@@ -203,9 +209,9 @@
    * @param {exception} err - the contents of the error.
    * @param {HTMLElement} container - the DOM element within which to display the error message.
    */
-  function handleError(container) {
+  function handleError(err, container) {
     let errMsg = document.createElement('p');
-    errMsg.textContent = 'There was an error executing the requested action';
+    errMsg.textContent = err.message;
     container.appendChild(errMsg);
   }
 
