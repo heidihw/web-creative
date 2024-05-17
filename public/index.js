@@ -66,9 +66,7 @@
       content.appendChild(ul);
       console.log(res);
       for (const i in res) {
-        console.log(i);
         for (let j = 0; j < res[i].length; j++) {
-          console.log(j);
           let li = document.createElement('li');
           li.textContent = i + ' - ' + res[i][j];
           ul.appendChild(li);
