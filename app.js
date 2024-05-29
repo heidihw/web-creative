@@ -9,7 +9,7 @@
 
 'use strict';
 
-const ALBUMS_URL = 'data/albums.json';
+const ALBUMS_PATH = 'data/albums.json';
 
 const CLIENT_ERR_STATUS = 400;
 const SERVER_ERR_STATUS = 500;
@@ -37,7 +37,7 @@ app.use(multer().none()); // requires the "multer" module
  */
 app.get('/get', async function(req, res) {
   try {
-    let albums = await fs.readFile(ALBUMS_URL, 'utf8');
+    let albums = await fs.readFile(ALBUMS_PATH, 'utf8');
     albums = JSON.parse(albums);
     res.type('json').send(albums);
   } catch (err) {
@@ -53,7 +53,7 @@ app.get('/get', async function(req, res) {
  */
 app.post('/add', async function(req, res) {
   try {
-    let albums = await fs.readFile(ALBUMS_URL, 'utf8');
+    let albums = await fs.readFile(ALBUMS_PATH, 'utf8');
     albums = JSON.parse(albums);
     let artist = req.body.artist;
     let album = req.body.album;
@@ -72,20 +72,24 @@ app.post('/add', async function(req, res) {
  * @param {Promise} res - the response Promise with which to send the completion message.
  */
 async function addAlbum(artist, album, albums, res) {
-  if (artist && album) {
-    if (albums[artist]) {
-      albums[artist].push(album);
-      await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-      res.type('text').send('Added an album by an existing artist');
+  try {
+    if (artist && album) {
+      if (albums[artist]) {
+        albums[artist].push(album);
+        await fs.writeFile(ALBUMS_PATH, JSON.stringify(albums));
+        res.type('text').send('Added an album by an existing artist');
+      } else {
+        albums[artist] = [];
+        albums[artist].push(album);
+        await fs.writeFile(ALBUMS_PATH, JSON.stringify(albums));
+        res.type('text').send('Added an album by a new artist');
+      }
     } else {
-      albums[artist] = [];
-      albums[artist].push(album);
-      await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-      res.type('text').send('Added an album by a new artist');
+      res.type('text').status(CLIENT_ERR_STATUS)
+        .send('Missing required parameters');
     }
-  } else {
-    res.type('text').status(CLIENT_ERR_STATUS)
-      .send('Missing required parameters');
+  } catch (err) {
+    handleError(err, res);
   }
 }
 
@@ -97,7 +101,7 @@ async function addAlbum(artist, album, albums, res) {
  */
 app.post('/remove', async function(req, res) {
   try {
-    let albums = await fs.readFile(ALBUMS_URL, 'utf8');
+    let albums = await fs.readFile(ALBUMS_PATH, 'utf8');
     albums = JSON.parse(albums);
     let artist = req.body.artist;
     let album = req.body.album;
@@ -116,25 +120,29 @@ app.post('/remove', async function(req, res) {
  * @param {Promise} res - the response Promise with which to send the completion message.
  */
 async function removeAlbum(artist, album, albums, res) {
-  if (artist && album) {
-    if (albums[artist] && albums[artist].includes(album)) {
-      if (albums[artist].length === 1) {
-        delete albums[artist];
-        await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-        res.type('text').send('Removed the only album by the artist');
+  try {
+    if (artist && album) {
+      if (albums[artist] && albums[artist].includes(album)) {
+        if (albums[artist].length === 1) {
+          delete albums[artist];
+          await fs.writeFile(ALBUMS_PATH, JSON.stringify(albums));
+          res.type('text').send('Removed the only album by the artist');
+        } else {
+          let i = albums[artist].indexOf(album);
+          albums[artist].splice(i, 1);
+          await fs.writeFile(ALBUMS_PATH, JSON.stringify(albums));
+          res.type('text').send('Removed the given album by the artist');
+        }
       } else {
-        let i = albums[artist].indexOf(album);
-        albums[artist].splice(i, 1);
-        await fs.writeFile(ALBUMS_URL, JSON.stringify(albums));
-        res.type('text').send('Removed the given album by the artist');
+        res.type('text').status(CLIENT_ERR_STATUS)
+          .send('Could not find the album by the artist');
       }
     } else {
       res.type('text').status(CLIENT_ERR_STATUS)
-        .send('Could not find the album by the artist');
+        .send('Missing required parameters');
     }
-  } else {
-    res.type('text').status(CLIENT_ERR_STATUS)
-      .send('Missing required parameters');
+  } catch (err) {
+    handleError(err, res);
   }
 }
 

@@ -1,7 +1,7 @@
 # Heidi Wang API Documentation
 This is an API that manages a list of music albums. It depends on the `data/albums.json` file that consists of a list of albums by each artist.
 
-## Get
+## Endpoint 1: Get
 **Request Format:** `/get`
 
 **Request Type:** `GET`
@@ -30,7 +30,7 @@ This is an API that manages a list of music albums. It depends on the `data/albu
 - If something goes wrong on the server, returns `Something went wrong on the server`
 
 
-## Add
+## Endpoint 2: Add
 **Request Format:** `/add` with `POST` parameters of `artist` and `album`
 
 **Request Type:** `POST`
@@ -60,7 +60,7 @@ Added an album by a new artist
 - If something goes wrong on the server, returns `Something went wrong on the server`
 
 
-## Remove
+## Endpoint 3: Remove
 **Request Format:** `/remove` with `POST` parameters of `artist` and `album`
 
 **Request Type:** `POST`
