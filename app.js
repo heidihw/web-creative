@@ -3,7 +3,7 @@
  * Date:    2024 05 16
  * Section: CSE 154 AG
  *
- * app.js is the code for an API that manages a list of music albums.
+ * This is the app.js file for an API that manages a list of music albums.
  * It depends on the data/albums.json file that consists of a list of albums by each artist.
  */
 
