@@ -16,15 +16,15 @@
   let images = [];
   let parents = [];
 
+  const WB_URL = 'http://api.worldbank.org/v2/country/us';
+  const UST_URL = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny';
+
   const MILLISECONDS_PER_SECOND = 1000;
   const SECONDS_PER_MINUTE = 60;
   const MILLISECONDS_PER_MINUTE = SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
   const MINUTES_PER_HOUR = 60;
   const HOURS_PER_DAY = 24;
   const MILLISECONDS_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR * MILLISECONDS_PER_MINUTE;
-
-  const WB_URL = 'http://api.worldbank.org/v2/country/us';
-  const UST_URL = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny';
 
   /**
    * Initializes the image button to toggle showing the images.
@@ -62,7 +62,7 @@
 
       let ul = document.createElement('ul');
       content.appendChild(ul);
-      for (const i in res) {
+      for (let i = 0; i < res.length; i++) {
         for (let j = 0; j < res[i].length; j++) {
           let li = document.createElement('li');
           li.textContent = i + ' - ' + res[i][j];
