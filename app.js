@@ -11,10 +11,6 @@
 
 const ALBUMS_PATH = 'data/albums.json';
 
-const CLIENT_ERR_STATUS = 400;
-const SERVER_ERR_STATUS = 500;
-const LOCAL_PORT = 8000;
-
 const express = require('express');
 const app = express();
 
@@ -85,7 +81,7 @@ async function addAlbum(artist, album, albums, res) {
         res.type('text').send('Added an album by a new artist');
       }
     } else {
-      res.type('text').status(CLIENT_ERR_STATUS)
+      res.type('text').status(400)
         .send('Missing required parameters');
     }
   } catch (err) {
@@ -134,11 +130,11 @@ async function removeAlbum(artist, album, albums, res) {
           res.type('text').send('Removed the given album by the artist');
         }
       } else {
-        res.type('text').status(CLIENT_ERR_STATUS)
+        res.type('text').status(400)
           .send('Could not find the album by the artist');
       }
     } else {
-      res.type('text').status(CLIENT_ERR_STATUS)
+      res.type('text').status(400)
         .send('Missing required parameters');
     }
   } catch (err) {
@@ -153,10 +149,10 @@ async function removeAlbum(artist, album, albums, res) {
  */
 function handleError(err, res) {
   if (err.code === 'ENOENT') {
-    res.type('text').status(SERVER_ERR_STATUS)
+    res.type('text').status(500)
       .send('File not found on the server');
   } else {
-    res.type('text').status(SERVER_ERR_STATUS)
+    res.type('text').status(500)
       .send('Something went wrong on the server');
   }
 }
@@ -165,7 +161,7 @@ function handleError(err, res) {
 app.use(express.static('public'));
 
 // specify the port to listen on
-const PORT = process.env.PORT || LOCAL_PORT;
+const PORT = process.env.PORT || 8000;
 
 // tells the application to run on the specified port
 app.listen(PORT);
